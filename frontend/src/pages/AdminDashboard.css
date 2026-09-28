@@ -1,0 +1,177 @@
+.admin-container {
+  padding: 1.5rem 0 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.eyebrow {
+  display: inline-block;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #1b6cae;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.admin-header h1 {
+  font-size: clamp(2rem, 3vw, 2.6rem);
+  color: #12253a;
+  margin: 0;
+}
+
+.admin-header p {
+  color: #53657a;
+  margin: 0;
+}
+
+.admin-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.summary-card {
+  background: linear-gradient(135deg, #0f3d64 0%, #1b6cae 100%);
+  border-radius: 18px;
+  padding: 1.1rem 1.25rem;
+  color: white;
+  box-shadow: 0 12px 22px rgba(15, 61, 100, 0.16);
+}
+
+.summary-card span {
+  display: block;
+  font-size: 0.8rem;
+  opacity: 0.8;
+  margin-bottom: 0.4rem;
+}
+
+.summary-card strong {
+  font-size: 1.8rem;
+}
+
+.admin-tabs {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #e5edf6;
+  padding-bottom: 0.75rem;
+}
+
+.tab-btn {
+  padding: 0.8rem 1.1rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border: 1px solid #dfeaf3;
+  background: white;
+  color: #39506a;
+  cursor: pointer;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.tab-btn:hover {
+  background: #f5f9fd;
+}
+
+.tab-btn.active {
+  background: #0f3d64;
+  border-color: #0f3d64;
+  color: white;
+}
+
+.data-table-container {
+  background: white;
+  border: 1px solid #eaeef4;
+  border-radius: 18px;
+  box-shadow: 0 10px 24px rgba(15, 61, 100, 0.06);
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.data-table th,
+.data-table td {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.data-table th {
+  background: #f9fafb;
+  font-weight: 600;
+  color: #4b5563;
+  text-transform: uppercase;
+  font-size: 0.875rem;
+  letter-spacing: 0.05em;
+}
+
+.data-table tbody tr:hover {
+  background: #f9fafb;
+}
+
+.data-table .row-banned,
+.data-table .row-resolved {
+  background: #f9fafb;
+  opacity: 0.8;
+}
+
+.badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.role-admin { background: #fee2e2; color: #991b1b; }
+.role-user { background: #e0e7ff; color: #3730a3; }
+
+.status-active { background: #dcfce7; color: #166534; }
+.status-banned { background: #fee2e2; color: #991b1b; }
+.status-pending { background: #fef08a; color: #854d0e; }
+.status-resolved { background: #e5e7eb; color: #374151; }
+
+.action-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.action-btn:hover {
+  opacity: 0.9;
+}
+
+.btn-ban { background: #ef4444; color: white; }
+.btn-unban { background: #10b981; color: white; }
+.btn-ignore { background: #9ca3af; color: white; }
+.btn-remove { background: #f59e0b; color: white; }
+.btn-ban-user { background: #dc2626; color: white; }
+
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.reason-cell {
+  max-width: 300px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

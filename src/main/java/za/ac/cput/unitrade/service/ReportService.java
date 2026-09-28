@@ -41,4 +41,31 @@ public class ReportService {
 
         return reportRepository.save(report);
     }
+
+    public Iterable<Report> getAllReports() {
+        return reportRepository.findAll();
+    }
+
+    public Report resolveReport(Long reportId, String action) {
+        Report report = reportRepository.findById(reportId)
+                .orElseThrow(() -> new RuntimeException("Report not found"));
+
+        report.setStatus("RESOLVED");
+        
+        if ("REMOVE_ITEM".equals(action)) {
+            Item item = report.getItem();
+            item.setStatus("REMOVED");
+            itemRepository.save(item);
+        } else if ("BAN_USER".equals(action)) {
+            User reporter = report.getItem().getSeller(); // Ban the seller of the item
+            reporter.setBanned(true);
+            userRepository.save(reporter);
+            
+            Item item = report.getItem();
+            item.setStatus("REMOVED");
+            itemRepository.save(item);
+        }
+
+        return reportRepository.save(report);
+    }
 }

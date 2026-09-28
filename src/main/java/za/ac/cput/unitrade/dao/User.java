@@ -31,4 +31,10 @@ public class User {
 
     @Column(nullable = false)
     private boolean isVerified = false;
+
+    @Column(nullable = false)
+    private String role = "USER";
+
+    @Column(nullable = false)
+    private boolean isBanned = false;
 }

@@ -28,12 +28,16 @@ public class Authentication {
     }
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserDTO userDTO) {
-        Optional<User> user = userService.login(userDTO.getUniversityEmail(), userDTO.getPassword());
+        try {
+            Optional<User> user = userService.login(userDTO.getUniversityEmail(), userDTO.getPassword());
 
-        if (user.isPresent()) {
-            return ResponseEntity.ok(user.get());
+            if (user.isPresent()) {
+                return ResponseEntity.ok(user.get());
+            }
+
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
         }
-
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
     }
 }

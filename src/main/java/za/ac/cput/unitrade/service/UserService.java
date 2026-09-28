@@ -18,14 +18,17 @@ public class UserService {
     private BCryptPasswordEncoder passwordEncoder;
 
     public User register(UserDTO userDTO) {
-        if (userRepository.existsByUniversityEmail(userDTO.getUniversityEmail())) {
+        String normalizedEmail = userDTO.getUniversityEmail() == null ? "" : userDTO.getUniversityEmail().trim().toLowerCase();
+        userDTO.setUniversityEmail(normalizedEmail);
+
+        if (userRepository.existsByUniversityEmail(normalizedEmail)) {
             throw new RuntimeException("An account with this email already exists");
         }
 
         User user = new User();
         user.setFirstName(userDTO.getFirstName());
         user.setLastName(userDTO.getLastName());
-        user.setUniversityEmail(userDTO.getUniversityEmail());
+        user.setUniversityEmail(normalizedEmail);
         user.setEmail(userDTO.getEmail());
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
 
@@ -33,12 +36,32 @@ public class UserService {
     }
 
     public Optional<User> login(String universityEmail, String password) {
-        Optional<User> user = userRepository.findByUniversityEmail(universityEmail);
+        String normalizedEmail = universityEmail == null ? "" : universityEmail.trim().toLowerCase();
+        Optional<User> user = userRepository.findByUniversityEmail(normalizedEmail);
 
         if (user.isPresent() && passwordEncoder.matches(password, user.get().getPassword())) {
+            if (user.get().isBanned()) {
+                throw new RuntimeException("This account has been banned.");
+            }
             return user;
         }
 
         return Optional.empty();
+    }
+
+    public Iterable<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    public User banUser(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        user.setBanned(true);
+        return userRepository.save(user);
+    }
+
+    public User unbanUser(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        user.setBanned(false);
+        return userRepository.save(user);
     }
 }

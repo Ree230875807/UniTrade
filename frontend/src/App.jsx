@@ -15,6 +15,7 @@ import CreateListing from './pages/CreateListing';
 import Messages from './pages/Messages';
 import OrderHistory from './pages/OrderHistory';
 import ListingDetails from './pages/ListingDetails';
+import AdminDashboard from './pages/AdminDashboard';
 import logo from './assets/logo.png';
 
 const navigationItems = [
@@ -28,6 +29,7 @@ const navigationItems = [
   { label: 'Terms & Privacy', icon: '▱', path: '/terms' },
   { label: 'Create Listing', icon: '+', path: '/create-listing' },
   { label: 'Messages', icon: '✉', path: '/messages' },
+  { label: 'Admin', icon: '⚙', path: '/admin' },
 ];
 
 const ProtectedRoute = ({ children }) => {
@@ -66,7 +68,12 @@ const MainLayout = () => {
     const path = location.pathname;
     const item = navigationItems.find(nav => nav.path === path) || (path.startsWith('/order-details/') ? { label: 'Order History' } : null);
     if (item) setActiveNav(item.label);
-  }, [location.pathname]);
+    
+    // Redirect admin from Home to Admin Dashboard
+    if (user?.role === 'ADMIN' && path === '/') {
+      navigate('/admin');
+    }
+  }, [location.pathname, user]);
 
   return (
     <div className="app">
@@ -79,8 +86,16 @@ const MainLayout = () => {
 
         <nav className="navigation">
           {navigationItems.map((item) => {
-            // Only show auth-required items if logged in (except Home/Search etc if public, but this app is mostly private)
-            if (!user && ['Cart', 'Checkout', 'Order History', 'Create Listing', 'Messages', 'Report Listing'].includes(item.label)) {
+            // Only show auth-required items if logged in
+            if (!user && ['Cart', 'Checkout', 'Order History', 'Create Listing', 'Messages', 'Report Listing', 'Admin'].includes(item.label)) {
+              return null;
+            }
+            // If user is ADMIN, only show the Admin tab
+            if (user?.role === 'ADMIN' && item.label !== 'Admin') {
+              return null;
+            }
+            // Only show Admin if user has ADMIN role
+            if (item.label === 'Admin' && user?.role !== 'ADMIN') {
               return null;
             }
             return (
@@ -100,16 +115,25 @@ const MainLayout = () => {
         </nav>
 
         {user ? (
-          <button className="profile" onClick={() => navigate('/profile')}>
-            <div className="profile-avatar">
-              {user.firstName.charAt(0)}{user.lastName.charAt(0)}
-            </div>
-            <div className="profile-info">
-              <strong>{user.firstName} {user.lastName}</strong>
-              <span>View profile</span>
-            </div>
-            <span className="profile-arrow">→</span>
-          </button>
+          <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <button className="profile" onClick={() => navigate('/profile')} style={{ marginTop: 0 }}>
+              <div className="profile-avatar">
+                {user.firstName.charAt(0)}{user.lastName.charAt(0)}
+              </div>
+              <div className="profile-info">
+                <strong>{user.firstName} {user.lastName}</strong>
+                <span>View profile</span>
+              </div>
+              <span className="profile-arrow">→</span>
+            </button>
+            <button 
+              className="nav-item" 
+              onClick={handleLogout} 
+              style={{ justifyContent: 'center', color: '#dc2626', background: '#fee2e2', fontWeight: 'bold' }}
+            >
+              Logout
+            </button>
+          </div>
         ) : (
           <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '10px' }}>
             <Link to="/login" className="nav-item" style={{ justifyContent: 'center', background: 'var(--cput-blue)', color: 'white' }}>Login</Link>
@@ -148,6 +172,7 @@ function App() {
           <Route path="/terms" element={<TermsPrivacy />} />
           <Route path="/create-listing" element={<CreateListing />} />
           <Route path="/messages" element={<Messages />} />
+          <Route path="/admin" element={<AdminDashboard />} />
         </Route>
       </Routes>
     </BrowserRouter>

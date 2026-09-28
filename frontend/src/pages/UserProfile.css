@@ -14,4 +14,7 @@
 .profile-fields span { color: var(--muted); font-size: 12px; }
 .profile-fields strong { font-size: 14px; font-weight: 600; }
 .profile-status { color: var(--success); }
-@media (max-width: 560px) { .profile-heading { align-items: start; flex-direction: column; } .profile-heading h1 { font-size: 34px; } .profile-card { padding: 22px; } .profile-fields { grid-template-columns: 1fr; gap: 18px; } }
+.profile-actions { display: flex; justify-content: flex-end; margin-top: 28px; }
+.logout-button { padding: 12px 18px; border: none; border-radius: 12px; background: #0f3d64; color: #fff; font-weight: 700; cursor: pointer; transition: background 0.2s ease, transform 0.2s ease; }
+.logout-button:hover { background: #092640; transform: translateY(-1px); }
+@media (max-width: 560px) { .profile-heading { align-items: start; flex-direction: column; } .profile-heading h1 { font-size: 34px; } .profile-card { padding: 22px; } .profile-fields { grid-template-columns: 1fr; gap: 18px; } .profile-actions { justify-content: stretch; } .logout-button { width: 100%; } }
