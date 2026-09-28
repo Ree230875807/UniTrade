@@ -6,6 +6,7 @@ export default function SignUp() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
+  const [personalEmail, setPersonalEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -34,6 +35,7 @@ export default function SignUp() {
           firstName,
           lastName,
           universityEmail: email,
+          email: personalEmail,
           password
         }),
       });
@@ -108,6 +110,18 @@ export default function SignUp() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required 
+              />
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label>Personal Email</label>
+            <div className="input-container">
+              <input
+                type="email"
+                value={personalEmail}
+                onChange={(e) => setPersonalEmail(e.target.value)}
+                required
               />
             </div>
           </div>

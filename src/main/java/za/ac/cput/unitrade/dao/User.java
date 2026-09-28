@@ -2,6 +2,7 @@ package za.ac.cput.unitrade.dao;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Data
 @Entity
@@ -15,7 +16,11 @@ public class User {
     @Column(nullable = false, unique = true)
     private String universityEmail;
 
+    @Column
+    private String email;
+
     @Column(nullable = false)
+    @JsonIgnore
     private String password;
 
     @Column(nullable = false)

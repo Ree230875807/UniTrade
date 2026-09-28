@@ -13,7 +13,7 @@ public class Item {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "seller_id", nullable = false)
     private User seller;
 
@@ -36,6 +36,9 @@ public class Item {
     private String status;
 
     private String imageUrl;
+
+    @Column(length = 120)
+    private String location;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;

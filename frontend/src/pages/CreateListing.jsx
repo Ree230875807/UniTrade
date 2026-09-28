@@ -1,6 +1,9 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "./CreateListing.css";
 
 export default function CreateListing() {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         title: "",
         description: "",
@@ -10,85 +13,69 @@ export default function CreateListing() {
         location: "",
         image: "",
     });
+    const [error, setError] = useState("");
+    const [submitting, setSubmitting] = useState(false);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-
-        setFormData((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
+        setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-
-        console.log("Listing created:", formData);
+        setError("");
+        setSubmitting(true);
+        let user;
+        try {
+            user = JSON.parse(localStorage.getItem("user"));
+            const response = await fetch('/api/items', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ...formData, imageUrl: formData.image, sellerId: user?.id, price: Number(formData.price) }),
+            });
+            if (!response.ok) throw new Error(await response.text() || 'Unable to publish this listing.');
+            navigate('/search');
+        } catch (submissionError) {
+            setError(submissionError.message);
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     return (
-        <div className="container py-4">
-            <div className="mb-4">
-                <h1 className="fw-bold">Create Listing</h1>
-                <p className="text-muted">
-                    Add a new item to the UniTrade marketplace.
-                </p>
-            </div>
+        <div className="listing-page">
+            <header className="listing-heading">
+                <div>
+                    <span className="listing-eyebrow">SELL ON UNITRADE</span>
+                    <h1>Create a listing</h1>
+                    <p>Give your item a clear story so the right student can find it.</p>
+                </div>
+                <div className="listing-step">Step 1 of 1 <span>Listing details</span></div>
+            </header>
 
-            <div className="card shadow-sm border-0">
-                <div className="card-body p-4">
-                    <form onSubmit={handleSubmit}>
-                        <div className="mb-3">
-                            <label htmlFor="title" className="form-label fw-semibold">
-                                Listing Title
-                            </label>
-
-                            <input
-                                type="text"
-                                className="form-control"
-                                id="title"
-                                name="title"
-                                placeholder="e.g. Second-hand laptop"
-                                value={formData.title}
-                                onChange={handleChange}
-                                required
-                            />
+            <div className="listing-layout">
+                <form className="listing-form" onSubmit={handleSubmit}>
+                    {error && <div className="listing-error" role="alert">{error}</div>}
+                    <section className="listing-section">
+                        <div className="section-title">
+                            <span className="section-number">01</span>
+                            <div><h2>Item details</h2><p>Start with the basics buyers look for first.</p></div>
                         </div>
 
-                        <div className="mb-3">
-                            <label
-                                htmlFor="description"
-                                className="form-label fw-semibold"
-                            >
-                                Description
-                            </label>
-
-                            <textarea
-                                className="form-control"
-                                id="description"
-                                name="description"
-                                rows="4"
-                                placeholder="Describe your item..."
-                                value={formData.description}
-                                onChange={handleChange}
-                                required
-                            />
+                        <div className="listing-field">
+                            <label htmlFor="title">Listing title</label>
+                            <input type="text" className="listing-input" id="title" name="title" placeholder="e.g. Second-hand laptop" value={formData.title} onChange={handleChange} required />
                         </div>
 
-                        <div className="row">
-                            <div className="col-md-6 mb-3">
-                                <label htmlFor="category" className="form-label fw-semibold">
-                                    Category
-                                </label>
+                        <div className="listing-field">
+                            <label htmlFor="description">Description</label>
+                            <textarea className="listing-input listing-textarea" id="description" name="description" placeholder="Describe the item's condition, features and anything a buyer should know..." value={formData.description} onChange={handleChange} required />
+                        </div>
 
-                                <select
-                                    className="form-select"
-                                    id="category"
-                                    name="category"
-                                    value={formData.category}
-                                    onChange={handleChange}
-                                    required
-                                >
+                        <div className="listing-fields-grid">
+                            <div className="listing-field">
+                                <label htmlFor="category">Category</label>
+                                <select className="listing-input" id="category" name="category" value={formData.category} onChange={handleChange} required>
                                     <option value="">Select category</option>
                                     <option value="electronics">Electronics</option>
                                     <option value="books">Books</option>
@@ -98,20 +85,9 @@ export default function CreateListing() {
                                     <option value="other">Other</option>
                                 </select>
                             </div>
-
-                            <div className="col-md-6 mb-3">
-                                <label htmlFor="condition" className="form-label fw-semibold">
-                                    Condition
-                                </label>
-
-                                <select
-                                    className="form-select"
-                                    id="condition"
-                                    name="condition"
-                                    value={formData.condition}
-                                    onChange={handleChange}
-                                    required
-                                >
+                            <div className="listing-field">
+                                <label htmlFor="condition">Condition</label>
+                                <select className="listing-input" id="condition" name="condition" value={formData.condition} onChange={handleChange} required>
                                     <option value="">Select condition</option>
                                     <option value="new">New</option>
                                     <option value="like-new">Like New</option>
@@ -122,65 +98,41 @@ export default function CreateListing() {
                             </div>
                         </div>
 
-                        <div className="row">
-                            <div className="col-md-6 mb-3">
-                                <label htmlFor="price" className="form-label fw-semibold">
-                                    Price (R)
-                                </label>
-
-                                <input
-                                    type="number"
-                                    className="form-control"
-                                    id="price"
-                                    name="price"
-                                    placeholder="e.g. 850"
-                                    min="0"
-                                    step="0.01"
-                                    value={formData.price}
-                                    onChange={handleChange}
-                                    required
-                                />
+                        <div className="listing-fields-grid">
+                            <div className="listing-field">
+                                <label htmlFor="price">Price <span>(ZAR)</span></label>
+                                <input type="number" className="listing-input" id="price" name="price" placeholder="e.g. 850" min="0" step="0.01" value={formData.price} onChange={handleChange} required />
                             </div>
-
-                            <div className="col-md-6 mb-3">
-                                <label htmlFor="location" className="form-label fw-semibold">
-                                    Location
-                                </label>
-
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    id="location"
-                                    name="location"
-                                    placeholder="e.g. Cape Town Campus"
-                                    value={formData.location}
-                                    onChange={handleChange}
-                                    required
-                                />
+                            <div className="listing-field">
+                                <label htmlFor="location">Meet-up location</label>
+                                <input type="text" className="listing-input" id="location" name="location" placeholder="e.g. Cape Town Campus" value={formData.location} onChange={handleChange} required />
                             </div>
                         </div>
+                    </section>
 
-                        <div className="mb-4">
-                            <label htmlFor="image" className="form-label fw-semibold">
-                                Image URL
-                            </label>
-
-                            <input
-                                type="url"
-                                className="form-control"
-                                id="image"
-                                name="image"
-                                placeholder="https://example.com/image.jpg"
-                                value={formData.image}
-                                onChange={handleChange}
-                            />
+                    <section className="listing-section">
+                        <div className="section-title">
+                            <span className="section-number">02</span>
+                            <div><h2>Item photo</h2><p>Add a clear image to help your listing stand out.</p></div>
                         </div>
+                        <div className="listing-field">
+                            <label htmlFor="image">Image URL <span>(optional)</span></label>
+                            <input type="url" className="listing-input" id="image" name="image" placeholder="https://example.com/image.jpg" value={formData.image} onChange={handleChange} />
+                        </div>
+                    </section>
 
-                        <button type="submit" className="btn btn-primary px-4">
-                            Create Listing
-                        </button>
-                    </form>
-                </div>
+                    <div className="listing-actions">
+                        <span>Your listing will be visible to students on your campus.</span>
+                        <button type="submit" className="btn-primary" disabled={submitting}>{submitting ? 'Publishing...' : 'Publish listing'} <span aria-hidden="true">&#8594;</span></button>
+                    </div>
+                </form>
+
+                <aside className="listing-aside">
+                    <div className="listing-aside-art"><span>+</span></div>
+                    <h2>Make it easy to say yes.</h2>
+                    <p>Use a specific title, honest condition and a price that feels fair. Clear listings move faster.</p>
+                    <div className="listing-tip"><span aria-hidden="true">&#10003;</span><p><strong>Good to know</strong><br />Meet in a public campus location.</p></div>
+                </aside>
             </div>
         </div>
     );

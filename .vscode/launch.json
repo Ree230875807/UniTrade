@@ -5,6 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "java",
+            "name": "UniTradeApplication",
+            "request": "launch",
+            "mainClass": "za.ac.cput.unitrade.UniTradeApplication",
+            "projectName": "UniTrade"
+        },
+        {
             "type": "chrome",
             "request": "launch",
             "name": "Launch Chrome against localhost",

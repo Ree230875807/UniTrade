@@ -88,32 +88,37 @@ const categories = [
    PRODUCTS
 ========================= */
 
-const products = [
+const demoProducts = [
   {
+    id: 1,
     seller: 'Jon Erikson',
     name: 'Hacking - Textbook',
     price: 'R150',
     image: asset('hacking-book.JPG'),
   },
   {
+    id: 2,
     seller: 'Russel Hobbs',
     name: 'Kettle',
     price: 'R170',
     image: asset('kettle.JPG'),
   },
   {
+    id: 3,
     seller: 'Apple',
     name: 'Charger',
     price: 'R250',
     image: asset('charger.JPG'),
   },
   {
+    id: 4,
     seller: 'Sam Ndlovu',
     name: 'Backpack',
     price: 'R200',
     image: asset('backpack.JPG'),
   },
   {
+    id: 5,
     seller: 'Thato M.',
     name: 'Nike Air Force 1',
     price: 'R550',
@@ -175,69 +180,6 @@ const heroSlides = [
 
 
 /* =========================
-   SIDEBAR NAVIGATION
-========================= */
-
-const navigationItems = [
-  {
-    label: 'Home',
-    icon: '⌂',
-    path: '/',
-  },
-  {
-    label: 'Search',
-    icon: '⌕',
-    path: '/search',
-  },
-  {
-    label: 'Profile',
-    icon: '♙',
-    path: '/profile',
-  },
-  {
-    label: 'Cart',
-    icon: '🛒',
-    path: '/cart',
-  },
-  {
-    label: 'Checkout',
-    icon: '▣',
-    path: '/checkout',
-  },
-  {
-    label: 'Order Details',
-    icon: '▤',
-    path: '/order-details',
-  },
-  {
-    label: 'Help & FAQ',
-    icon: '?',
-    path: '/help',
-  },
-  {
-    label: 'Report Listing',
-    icon: '⚑',
-    path: '/report-listing',
-  },
-  {
-    label: 'Terms & Privacy',
-    icon: '▱',
-    path: '/terms',
-  },
-  {
-    label: 'Create Listing',
-    icon: '+',
-    path: '/create-listing',
-  },
-  {
-    label: 'Messages',
-    icon: '✉',
-    path: '/messages',
-  },
-];
-
-
-/* =========================
    HOME
 ========================= */
 
@@ -248,6 +190,31 @@ export default function Home() {
   const [favorites, setFavorites] = useState([]);
   const [search, setSearch] = useState('');
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [products, setProducts] = useState(demoProducts);
+
+  useEffect(() => {
+    let active = true;
+    fetch('/api/items')
+      .then((response) => response.ok ? response.json() : Promise.reject(new Error('Listings unavailable')))
+      .then((items) => {
+        if (!active || !items.length) return;
+        setProducts(items.map((item) => ({
+          id: item.id,
+          seller: item.sellerName,
+          sellerId: item.sellerId,
+          name: item.title,
+          price: `R${Number(item.price).toFixed(2)}`,
+          category: item.category,
+          location: item.location || 'Campus meetup',
+          condition: item.condition || 'Good',
+          image: item.imageUrl || asset('more.JPG'),
+          verifiedStudent: item.verifiedStudent,
+        })));
+      })
+      .catch(() => {})
+      .finally(() => { active = false; });
+    return () => { active = false; };
+  }, []);
 
 
   /* =========================
@@ -320,81 +287,13 @@ export default function Home() {
 
 
   return (
-    <div className="app">
-
-      {/* =========================
-          SIDEBAR
-      ========================= */}
-
-      <aside className="sidebar">
-
-        <Link to="/" className="brand">
-          <div className="brand-card">
-            <img
-              src={logo}
-              alt="UniTrade"
-              className="brand-logo"
-            />
-          </div>
-        </Link>
-
-
-        <nav className="navigation">
-
-          {navigationItems.map((item) => (
-            <button
-              key={item.label}
-              className={`nav-item ${
-                activeNav === item.label ? 'active' : ''
-              }`}
-              onClick={() => {
-                setActiveNav(item.label);
-                navigate(item.path);
-              }}
-            >
-              <span className="nav-icon">
-                {item.icon}
-              </span>
-
-              <span className="nav-label">
-                {item.label}
-              </span>
-            </button>
-          ))}
-
-        </nav>
-
-
-        {/* PROFILE */}
-
-        <button
-          className="profile"
-          onClick={() => navigate('/profile')}
-        >
-
-          <div className="profile-avatar">
-            RS
-          </div>
-
-          <div className="profile-info">
-            <strong>Reo Stock</strong>
-            <span>View profile</span>
-          </div>
-
-          <span className="profile-arrow">
-            →
-          </span>
-
-        </button>
-
-      </aside>
-
+    <div className="home-page">
 
       {/* =========================
           MAIN CONTENT
       ========================= */}
 
-      <main className="main-content">
+      <main className="home-main">
 
 
         {/* TOP BAR */}
@@ -436,7 +335,7 @@ export default function Home() {
           <button
             className="icon-button activity-button"
             aria-label="Activity"
-            onClick={() => navigate('/notifications')}
+            onClick={() => navigate('/messages')}
           >
             <span>✦</span>
             <span className="notification-dot"></span>
@@ -451,7 +350,8 @@ export default function Home() {
           >
 
             <div className="small-avatar">
-              RS
+              {JSON.parse(localStorage.getItem('user') || '{}').firstName?.[0] || 'U'}
+              {JSON.parse(localStorage.getItem('user') || '{}').lastName?.[0] || ''}
             </div>
 
             <span className="user-arrow">
@@ -470,7 +370,7 @@ export default function Home() {
         <section className="quick-actions">
 
           <button
-            onClick={() => navigate('/favorites')}
+            onClick={() => navigate('/search')}
           >
             <span className="quick-icon">♡</span>
             <span>Favorites</span>
@@ -478,7 +378,7 @@ export default function Home() {
 
 
           <button
-            onClick={() => navigate('/history')}
+            onClick={() => navigate('/order-history')}
           >
             <span className="quick-icon">◷</span>
             <span>History</span>
@@ -486,7 +386,7 @@ export default function Home() {
 
 
           <button
-            onClick={() => navigate('/following')}
+            onClick={() => navigate('/search')}
           >
             <span className="quick-icon">+</span>
             <span>Following</span>
@@ -633,7 +533,7 @@ export default function Home() {
               <button
                 className="category"
                 key={category.name}
-                onClick={() => navigate('/search')}
+                onClick={() => navigate(`/search?category=${encodeURIComponent(category.name === 'Academics' ? 'Books' : category.name === 'Res Living' ? 'Furniture' : category.name)}`)}
               >
 
                 <div className="category-image">
@@ -702,6 +602,7 @@ export default function Home() {
               <article
                 className="product-card"
                 key={product.name}
+                onClick={() => navigate(`/listing/${product.id}`)}
               >
 
                 <div className="product-image">
@@ -719,7 +620,7 @@ export default function Home() {
                         ? 'liked'
                         : ''
                     }`}
-                    onClick={() => toggleFavorite(index)}
+                    onClick={(event) => { event.stopPropagation(); toggleFavorite(index); }}
                     aria-label={
                       favorites.includes(index)
                         ? 'Remove from favorites'
@@ -754,6 +655,26 @@ export default function Home() {
 
           </div>
 
+          {filteredProducts.length === 0 && (
+            <div className="home-empty-finds">
+              <strong>No finds match that search.</strong>
+              <button onClick={() => setSearch('')}>Clear search</button>
+            </div>
+          )}
+
+        </section>
+
+        <section className="campus-value-section">
+          <div className="campus-value-heading">
+            <span className="section-eyebrow">MADE FOR STUDENTS</span>
+            <h2>A marketplace that feels close to campus.</h2>
+            <p>Buy from verified students, ask questions before you commit, and arrange a simple public meetup.</p>
+          </div>
+          <div className="campus-value-grid">
+            <article className="campus-value-card"><span className="value-number">01</span><h3>Browse with confidence</h3><p>Every seller profile carries a student verification signal so you know who you are dealing with.</p></article>
+            <article className="campus-value-card"><span className="value-number">02</span><h3>Ask before you buy</h3><p>Message a seller to confirm availability, condition and a collection time that works for both of you.</p></article>
+            <article className="campus-value-card campus-value-card-accent"><span className="value-number">03</span><h3>Have something to sell?</h3><p>Turn useful items you no longer need into extra cash for your next campus day.</p><button onClick={() => navigate('/create-listing')}>Create a listing <span aria-hidden="true">&#8594;</span></button></article>
+          </div>
         </section>
 
       </main>

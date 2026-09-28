@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route, Link, Outlet } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link, Outlet, useNavigate, useLocation, Navigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
@@ -12,28 +13,112 @@ import ReportListing from './pages/ReportListing';
 import TermsPrivacy from './pages/TermsPrivacy';
 import CreateListing from './pages/CreateListing';
 import Messages from './pages/Messages';
+import OrderHistory from './pages/OrderHistory';
+import ListingDetails from './pages/ListingDetails';
+import logo from './assets/logo.png';
+
+const navigationItems = [
+  { label: 'Home', icon: '⌂', path: '/' },
+  { label: 'Discover', icon: '⌕', path: '/search' },
+  { label: 'Cart', icon: '🛒', path: '/cart' },
+  { label: 'Checkout', icon: '▣', path: '/checkout' },
+  { label: 'Order History', icon: '▤', path: '/order-history' },
+  { label: 'Help & FAQ', icon: '?', path: '/help' },
+  { label: 'Report Listing', icon: '⚑', path: '/report-listing' },
+  { label: 'Terms & Privacy', icon: '▱', path: '/terms' },
+  { label: 'Create Listing', icon: '+', path: '/create-listing' },
+  { label: 'Messages', icon: '✉', path: '/messages' },
+];
+
+const ProtectedRoute = ({ children }) => {
+  const user = localStorage.getItem('user');
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+  return children;
+};
 
 const MainLayout = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [user, setUser] = useState(null);
+  const [activeNav, setActiveNav] = useState('Home');
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (e) {
+        console.error("Failed to parse user from local storage");
+      }
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    setUser(null);
+    navigate('/login');
+  };
+
+  // Sync active nav with current path
+  useEffect(() => {
+    const path = location.pathname;
+    const item = navigationItems.find(nav => nav.path === path) || (path.startsWith('/order-details/') ? { label: 'Order History' } : null);
+    if (item) setActiveNav(item.label);
+  }, [location.pathname]);
+
   return (
-    <div className="layout-container">
-      <nav style={{ padding: '1rem', borderBottom: '1px solid var(--border)' }}>
-        <ul style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', listStyle: 'none', padding: 0, margin: 0, justifyContent: 'center' }}>
-          <li><Link to="/">Home</Link></li>
-          <li><Link to="/login">Login</Link></li>
-          <li><Link to="/signup">Sign Up</Link></li>
-          <li><Link to="/search">Search</Link></li>
-          <li><Link to="/profile">Profile</Link></li>
-          <li><Link to="/cart">Cart</Link></li>
-          <li><Link to="/checkout">Checkout</Link></li>
-          <li><Link to="/order-details">Order Details</Link></li>
-          <li><Link to="/help">Help/FAQ</Link></li>
-          <li><Link to="/report-listing">Report Listing</Link></li>
-          <li><Link to="/terms">Terms</Link></li>
-          <li><Link to="/create-listing">Create Listing</Link></li>
-          <li><Link to="/messages">Messages</Link></li>
-        </ul>
-      </nav>
-      <main style={{ padding: '2rem', flexGrow: 1, boxSizing: 'border-box' }}>
+    <div className="app">
+      <aside className="sidebar">
+        <Link to="/" className="brand" onClick={() => setActiveNav('Home')}>
+          <div className="brand-card">
+            <img src={logo} alt="UniTrade" className="brand-logo" />
+          </div>
+        </Link>
+
+        <nav className="navigation">
+          {navigationItems.map((item) => {
+            // Only show auth-required items if logged in (except Home/Search etc if public, but this app is mostly private)
+            if (!user && ['Cart', 'Checkout', 'Order History', 'Create Listing', 'Messages', 'Report Listing'].includes(item.label)) {
+              return null;
+            }
+            return (
+              <button
+                key={item.label}
+                className={`nav-item ${activeNav === item.label ? 'active' : ''}`}
+                onClick={() => {
+                  setActiveNav(item.label);
+                  navigate(item.path);
+                }}
+              >
+                <span className="nav-icon">{item.icon}</span>
+                <span className="nav-label">{item.label}</span>
+              </button>
+            );
+          })}
+        </nav>
+
+        {user ? (
+          <button className="profile" onClick={() => navigate('/profile')}>
+            <div className="profile-avatar">
+              {user.firstName.charAt(0)}{user.lastName.charAt(0)}
+            </div>
+            <div className="profile-info">
+              <strong>{user.firstName} {user.lastName}</strong>
+              <span>View profile</span>
+            </div>
+            <span className="profile-arrow">→</span>
+          </button>
+        ) : (
+          <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <Link to="/login" className="nav-item" style={{ justifyContent: 'center', background: 'var(--cput-blue)', color: 'white' }}>Login</Link>
+            <Link to="/signup" className="nav-item" style={{ justifyContent: 'center', background: '#f5f7f8' }}>Sign Up</Link>
+          </div>
+        )}
+      </aside>
+
+      <main className="main-content">
         <Outlet />
       </main>
     </div>
@@ -49,13 +134,15 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         
         {/* All other routes with MainLayout */}
-        <Route element={<MainLayout />}>
+        <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
           <Route path="/" element={<Home />} />
           <Route path="/search" element={<Search />} />
+          <Route path="/listing/:id" element={<ListingDetails />} />
           <Route path="/profile" element={<UserProfile />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
-          <Route path="/order-details" element={<OrderDetails />} />
+          <Route path="/order-history" element={<OrderHistory />} />
+          <Route path="/order-details/:id" element={<OrderDetails />} />
           <Route path="/help" element={<HelpFAQ />} />
           <Route path="/report-listing" element={<ReportListing />} />
           <Route path="/terms" element={<TermsPrivacy />} />

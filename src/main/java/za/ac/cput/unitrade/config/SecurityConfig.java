@@ -17,7 +17,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/auth/**", "/api/messages/**", "/api/users/**", "/api/items/**").permitAll()
                         .requestMatchers("/", "/home.html", "/dashboard.html").permitAll()
                         .requestMatchers("/home.css", "/home.js", "/dashboard.css", "/dashboard.js").permitAll()
                         .requestMatchers("/logo.png", "/*.png", "/*.jpg", "/*.jpeg", "/*.ico", "/*.svg").permitAll()

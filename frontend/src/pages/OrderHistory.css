@@ -1,0 +1,12 @@
+.history-list { overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--shadow-soft); }
+.history-item { display: flex; align-items: center; gap: 18px; padding: 24px 26px; border-bottom: 1px solid var(--border); text-decoration: none; transition: background 160ms ease; }
+.history-item:last-child { border-bottom: 0; }
+.history-item:hover { background: #f7fbfc; }
+.history-date { color: var(--cput-blue-bright); font-size: 11px; font-weight: 700; text-transform: uppercase; }
+.history-item h2 { margin: 6px 0 5px; font-size: 17px; }
+.history-item p { margin: 0; color: var(--muted); font-size: 12px; }
+.history-total { display: flex; align-items: flex-end; flex-direction: column; gap: 7px; margin-left: auto; }
+.history-total strong { color: var(--cput-blue); font-size: 16px; }
+.history-total span { color: var(--success); font-size: 11px; font-weight: 700; }
+.history-arrow { color: var(--cput-blue); font-size: 20px; }
+@media (max-width: 520px) { .history-item { padding: 19px 17px; } .history-item p { max-width: 180px; line-height: 1.45; } .history-total { display: none; } }
