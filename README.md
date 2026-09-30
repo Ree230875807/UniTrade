@@ -32,9 +32,7 @@ There is a clear need for a secure, student-focused digital marketplace that con
 •	Role-based access control (Student and Administrator)
 
 5.2 Future Enhancements (If Time Permits)
-•	Mobile application development (Android / iOS)
-•	Integration with external third-party payment gateways (e.g., PayPal, Stripe)
-•	Real-time messaging or chat between users
+•	Integration with external third-party payment gateways
 •	Advanced ratings and reviews analytics
 •	Deployment to a live production server
 
