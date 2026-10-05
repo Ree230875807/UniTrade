@@ -21,8 +21,6 @@ public class AdminController {
     @Autowired
     private ReportService reportService;
 
-    // --- User Management ---
-
     @GetMapping("/users")
     public ResponseEntity<Iterable<User>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());

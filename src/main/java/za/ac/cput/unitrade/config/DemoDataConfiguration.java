@@ -8,6 +8,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import za.ac.cput.unitrade.dao.Item;
 import za.ac.cput.unitrade.dao.User;
 import za.ac.cput.unitrade.repository.ItemRepository;
+import za.ac.cput.unitrade.repository.ReportRepository;
 import za.ac.cput.unitrade.repository.UserRepository;
 
 import java.math.BigDecimal;
@@ -20,6 +21,7 @@ public class DemoDataConfiguration {
     CommandLineRunner seedDemoMarketplace(
             UserRepository userRepository,
             ItemRepository itemRepository,
+            ReportRepository reportRepository,
             BCryptPasswordEncoder passwordEncoder,
             @Value("${unitrade.demo-data.enabled:true}") boolean enabled) {
         return args -> {
@@ -48,7 +50,10 @@ public class DemoDataConfiguration {
             boolean onlyDemoData = !existingItems.isEmpty() && existingItems.stream()
                     .allMatch(item -> item.getSeller() != null && demoEmails.contains(item.getSeller().getUniversityEmail()));
             if (!existingItems.isEmpty() && !onlyDemoData) return;
-            if (onlyDemoData) itemRepository.deleteAll(existingItems);
+            if (onlyDemoData) {
+                reportRepository.deleteAll();
+                itemRepository.deleteAll(existingItems);
+            }
 
             List<User> users = sellers.stream().map(seller -> {
                 return userRepository.findByUniversityEmail(seller.universityEmail()).orElseGet(() -> {
