@@ -1,0 +1,133 @@
+.terms-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.terms-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.terms-eyebrow {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--cput-blue-bright);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.terms-header h1 {
+  font-size: 42px;
+  margin-bottom: 16px;
+  color: var(--ink);
+}
+
+.terms-header p {
+  font-size: 18px;
+  color: var(--muted);
+}
+
+.terms-nav {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 48px;
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 16px;
+}
+
+.terms-tab {
+  background: none;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--muted);
+  padding: 12px 24px;
+  cursor: pointer;
+  border-radius: var(--radius-full);
+  transition: all 0.3s ease;
+}
+
+.terms-tab:hover {
+  background: var(--surface-soft);
+  color: var(--ink);
+}
+
+.terms-tab.active {
+  background: var(--cput-blue);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.terms-content {
+  background: var(--surface);
+  padding: 48px;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
+}
+
+.terms-content h2 {
+  font-size: 28px;
+  color: var(--cput-blue-dark);
+  margin-top: 40px;
+  margin-bottom: 20px;
+}
+
+.terms-content h2:first-child {
+  margin-top: 0;
+}
+
+.terms-content h3 {
+  font-size: 20px;
+  color: var(--ink);
+  margin-top: 24px;
+  margin-bottom: 12px;
+}
+
+.terms-content p, .terms-content ul {
+  font-size: 16px;
+  line-height: 1.8;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+
+.terms-content ul {
+  padding-left: 24px;
+}
+
+.terms-content li {
+  margin-bottom: 8px;
+}
+
+.terms-content strong {
+  color: var(--ink);
+}
+
+@media (max-width: 768px) {
+  .terms-page {
+    padding: 24px 16px;
+  }
+  
+  .terms-header h1 {
+    font-size: 32px;
+  }
+  
+  .terms-nav {
+    flex-direction: column;
+    gap: 8px;
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  
+  .terms-tab {
+    width: 100%;
+  }
+  
+  .terms-content {
+    padding: 24px;
+  }
+}
