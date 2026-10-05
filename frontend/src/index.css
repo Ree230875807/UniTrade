@@ -408,9 +408,10 @@ input::placeholder, textarea::placeholder {
 
 @media (max-width: 640px) {
   .app { flex-direction: column; }
-  .main-content { width: 100%; margin-left: 0; padding: 24px 16px 80px; }
-  .sidebar { position: fixed; bottom: 0; top: auto; left: 0; right: 0; width: 100%; min-height: 64px; flex-direction: row; align-items: center; padding: 8px 16px; border-right: 0; border-top: 1px solid rgba(255,255,255,0.8); z-index: 100; justify-content: space-between; }
+  .main-content { width: 100%; margin-left: 0; padding: 16px 12px 80px; }
+  .sidebar { position: fixed; bottom: 0; top: auto; left: 0; right: 0; width: 100%; min-height: 64px; flex-direction: row; align-items: center; padding: 8px; border-right: 0; border-top: 1px solid rgba(255,255,255,0.8); z-index: 100; }
   .brand, .profile { display: none; }
-  .navigation { flex-direction: row; justify-content: space-around; width: 100%; }
-  .nav-item { margin: 0; }
+  .navigation { flex-direction: row; justify-content: flex-start; width: 100%; overflow-x: auto; gap: 8px; padding-bottom: 4px; -webkit-overflow-scrolling: touch; }
+  .navigation::-webkit-scrollbar { display: none; }
+  .nav-item { margin: 0; flex-shrink: 0; width: 48px; height: 48px; justify-content: center; padding: 0; }
 }
