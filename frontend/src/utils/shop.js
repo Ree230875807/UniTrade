@@ -36,7 +36,7 @@ export const clearCart = () => saveCart([]);
 export const getOrders = () => read(ORDERS_KEY, []);
 
 export const createOrder = ({ items, customer, meetupLocation, paymentMethod }) => {
-  const total = items.reduce((sum, item) => sum + Number(item.price) * Number(item.quantity || 1), 0);
+  const total = items.reduce((sum, item) => sum + Number(String(item.price).replace(/[^0-9.]/g, '')) * Number(item.quantity || 1), 0);
   const order = {
     id: `UT-${new Date().getFullYear()}-${String(Date.now()).slice(-6)}`,
     createdAt: new Date().toISOString(),
