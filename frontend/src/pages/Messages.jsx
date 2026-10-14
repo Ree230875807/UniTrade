@@ -13,7 +13,6 @@ export default function Messages() {
   const messagesEndRef = useRef(null);
   const [searchParams] = useSearchParams();
 
-  // Load current user on mount
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
@@ -23,7 +22,7 @@ export default function Messages() {
     }
   }, []);
 
-  // Fetch all users
+
   useEffect(() => {
     if (!currentUser) return;
     
@@ -32,7 +31,6 @@ export default function Messages() {
         const response = await fetch('/api/users');
         if (response.ok) {
           const data = await response.json();
-          // Filter out current user
           const availableUsers = data.filter(u => u.id !== currentUser.id);
           setUsers(availableUsers);
           const requestedSeller = searchParams.get('seller')?.toLowerCase();

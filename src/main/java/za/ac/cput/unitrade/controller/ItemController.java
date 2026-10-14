@@ -21,6 +21,9 @@ public class ItemController {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
 
+    @org.springframework.beans.factory.annotation.Autowired
+    private za.ac.cput.unitrade.service.MessageService messageService;
+
     public ItemController(ItemRepository itemRepository, UserRepository userRepository) {
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
@@ -58,6 +61,51 @@ public class ItemController {
                 .status("AVAILABLE")
                 .build();
         return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(itemRepository.save(item)));
+    }
+
+    @PostMapping("/{id}/buy")
+    public ResponseEntity<?> checkoutItem(
+            @PathVariable Long id,
+            @RequestParam Long buyerId,
+            @RequestParam(defaultValue = "false") boolean simulateMessageFailure) {
+
+        Optional<Item> itemOpt = itemRepository.findByIdAndStatus(id, "AVAILABLE");
+        if (itemOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body("Item is not available or does not exist.");
+        }
+
+        Item item = itemOpt.get();
+        User buyer = userRepository.findById(buyerId).orElse(null);
+        if (buyer == null) {
+            return ResponseEntity.badRequest().body("Buyer not found.");
+        }
+
+        // 1. Process primary transaction flow (Checkout)
+        item.setStatus("SOLD");
+        itemRepository.save(item);
+
+        // 2. Secondary flow: Send notification message to seller
+        try {
+            if (simulateMessageFailure) {
+                // Artificially block messaging API to simulate network error
+                throw new RuntimeException("Simulated Network Error in Messaging API");
+            }
+
+            za.ac.cput.unitrade.dto.MessageDTO msgDTO = new za.ac.cput.unitrade.dto.MessageDTO();
+            msgDTO.setSenderId(buyerId);
+            msgDTO.setReceiverId(item.getSeller().getId());
+            msgDTO.setContent("System Message: Your item '" + item.getTitle() + "' has been purchased by " + buyer.getFirstName() + "!");
+
+            messageService.sendMessage(msgDTO);
+
+        } catch (Exception e) {
+            // Catch the failure silently! 
+            // The primary transaction (checkout) is not broken by this secondary failure.
+            System.err.println("SILENT FAILURE CAUGHT: Failed to send notification message - " + e.getMessage());
+        }
+
+        // 3. Return successful Order Confirmed regardless of notification success
+        return ResponseEntity.ok("Order Confirmed! You have successfully purchased: " + item.getTitle());
     }
 
     private ItemResponseDTO toResponse(Item item) {

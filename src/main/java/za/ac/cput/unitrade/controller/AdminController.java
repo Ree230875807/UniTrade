@@ -36,8 +36,6 @@ public class AdminController {
         return ResponseEntity.ok(userService.unbanUser(id));
     }
 
-    // --- Content Moderation ---
-
     @GetMapping("/reports")
     public ResponseEntity<Iterable<Report>> getAllReports() {
         return ResponseEntity.ok(reportService.getAllReports());

@@ -18,18 +18,20 @@ import ListingDetails from './pages/ListingDetails';
 import AdminDashboard from './pages/AdminDashboard';
 import logo from './assets/logo.png';
 
+import { Home as HomeIcon, Search as SearchIcon, ShoppingCart, CreditCard, History, HelpCircle, Flag, Shield, PlusCircle, MessageSquare, Settings } from 'lucide-react';
+
 const navigationItems = [
-  { label: 'Home', icon: '⌂', path: '/' },
-  { label: 'Discover', icon: '⌕', path: '/search' },
-  { label: 'Cart', icon: '🛒', path: '/cart' },
-  { label: 'Checkout', icon: '▣', path: '/checkout' },
-  { label: 'Order History', icon: '▤', path: '/order-history' },
-  { label: 'Help & FAQ', icon: '?', path: '/help' },
-  { label: 'Report Listing', icon: '⚑', path: '/report-listing' },
-  { label: 'Terms & Privacy', icon: '▱', path: '/terms' },
-  { label: 'Create Listing', icon: '+', path: '/create-listing' },
-  { label: 'Messages', icon: '✉', path: '/messages' },
-  { label: 'Admin', icon: '⚙', path: '/admin' },
+  { label: 'Home', icon: HomeIcon, path: '/' },
+  { label: 'Discover', icon: SearchIcon, path: '/search' },
+  { label: 'Cart', icon: ShoppingCart, path: '/cart' },
+  { label: 'Checkout', icon: CreditCard, path: '/checkout' },
+  { label: 'Order History', icon: History, path: '/order-history' },
+  { label: 'Help & FAQ', icon: HelpCircle, path: '/help' },
+  { label: 'Report Listing', icon: Flag, path: '/report-listing' },
+  { label: 'Terms & Privacy', icon: Shield, path: '/terms' },
+  { label: 'Create Listing', icon: PlusCircle, path: '/create-listing' },
+  { label: 'Messages', icon: MessageSquare, path: '/messages' },
+  { label: 'Admin', icon: Settings, path: '/admin' },
 ];
 
 const ProtectedRoute = ({ children }) => {
@@ -90,14 +92,15 @@ const MainLayout = () => {
             if (!user && ['Cart', 'Checkout', 'Order History', 'Create Listing', 'Messages', 'Report Listing', 'Admin'].includes(item.label)) {
               return null;
             }
-            // If user is ADMIN, only show the Admin tab
-            if (user?.role === 'ADMIN' && item.label !== 'Admin') {
+            // If user is ADMIN, only show the Admin and Messages tabs
+            if (user?.role === 'ADMIN' && item.label !== 'Admin' && item.label !== 'Messages') {
               return null;
             }
             // Only show Admin if user has ADMIN role
             if (item.label === 'Admin' && user?.role !== 'ADMIN') {
               return null;
             }
+            const IconComponent = item.icon;
             return (
               <button
                 key={item.label}
@@ -107,7 +110,7 @@ const MainLayout = () => {
                   navigate(item.path);
                 }}
               >
-                <span className="nav-icon">{item.icon}</span>
+                <span className="nav-icon"><IconComponent size={20} /></span>
                 <span className="nav-label">{item.label}</span>
               </button>
             );

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './AdminDashboard.css';
 
 const AdminDashboard = () => {
@@ -6,6 +7,7 @@ const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   const normalizeUser = (user) => ({
     ...user,
@@ -150,21 +152,29 @@ const AdminDashboard = () => {
                       )}
                     </td>
                     <td>
-                      {user.isBanned ? (
+                      <div className="action-buttons">
                         <button
-                          className="action-btn btn-unban"
-                          onClick={() => handleBanToggle(user.id, true)}
+                          className="action-btn btn-msg"
+                          onClick={() => navigate(`/messages?seller=${encodeURIComponent(user.universityEmail)}`)}
                         >
-                          Unban
+                          Message
                         </button>
-                      ) : (
-                        <button
-                          className="action-btn btn-ban"
-                          onClick={() => handleBanToggle(user.id, false)}
-                        >
-                          Ban
-                        </button>
-                      )}
+                        {user.isBanned ? (
+                          <button
+                            className="action-btn btn-unban"
+                            onClick={() => handleBanToggle(user.id, true)}
+                          >
+                            Unban
+                          </button>
+                        ) : (
+                          <button
+                            className="action-btn btn-ban"
+                            onClick={() => handleBanToggle(user.id, false)}
+                          >
+                            Ban
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}

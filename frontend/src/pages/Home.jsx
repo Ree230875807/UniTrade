@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Search as SearchIcon, Plus, Sparkles, ChevronDown, Heart, Clock, SlidersHorizontal } from 'lucide-react';
 
 import './Home.css';
 
@@ -303,7 +304,7 @@ export default function Home() {
           <div className="search-container">
 
             <span className="search-icon">
-              ⌕
+              <SearchIcon size={20} strokeWidth={2.5} />
             </span>
 
             <input
@@ -325,7 +326,7 @@ export default function Home() {
             className="sell-button"
             onClick={() => navigate('/create-listing')}
           >
-            <span className="sell-plus">+</span>
+            <span className="sell-plus"><Plus size={18} strokeWidth={3} /></span>
             <span>Sell an Item</span>
           </button>
 
@@ -337,7 +338,7 @@ export default function Home() {
             aria-label="Activity"
             onClick={() => navigate('/messages')}
           >
-            <span>✦</span>
+            <span><Sparkles size={20} strokeWidth={2} /></span>
             <span className="notification-dot"></span>
           </button>
 
@@ -355,7 +356,7 @@ export default function Home() {
             </div>
 
             <span className="user-arrow">
-              ↓
+              <ChevronDown size={16} strokeWidth={2.5} />
             </span>
 
           </button>
@@ -372,7 +373,7 @@ export default function Home() {
           <button
             onClick={() => navigate('/search')}
           >
-            <span className="quick-icon">♡</span>
+            <span className="quick-icon"><Heart size={16} strokeWidth={2} /></span>
             <span>Favorites</span>
           </button>
 
@@ -380,7 +381,7 @@ export default function Home() {
           <button
             onClick={() => navigate('/order-history')}
           >
-            <span className="quick-icon">◷</span>
+            <span className="quick-icon"><Clock size={16} strokeWidth={2} /></span>
             <span>History</span>
           </button>
 
@@ -388,7 +389,7 @@ export default function Home() {
           <button
             onClick={() => navigate('/search')}
           >
-            <span className="quick-icon">+</span>
+            <span className="quick-icon"><Plus size={16} strokeWidth={2} /></span>
             <span>Following</span>
           </button>
 
@@ -398,7 +399,7 @@ export default function Home() {
             onClick={() => navigate('/search')}
             aria-label="More options"
           >
-            <span>☷</span>
+            <span><SlidersHorizontal size={16} strokeWidth={2} /></span>
           </button>
 
         </section>

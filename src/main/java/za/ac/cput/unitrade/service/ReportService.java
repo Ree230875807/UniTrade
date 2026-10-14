@@ -57,7 +57,7 @@ public class ReportService {
             item.setStatus("REMOVED");
             itemRepository.save(item);
         } else if ("BAN_USER".equals(action)) {
-            User reporter = report.getItem().getSeller(); // Ban the seller of the item
+            User reporter = report.getItem().getSeller();
             reporter.setBanned(true);
             userRepository.save(reporter);
             
